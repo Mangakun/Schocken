@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import schocken.marco.de.schocken.exceptions.DiceNotFoundException;
+import schocken.marco.de.schocken.exceptions.MaxPenaltyException;
 import schocken.marco.de.schocken.game.dice.Dice;
 import schocken.marco.de.schocken.game.dice.impl.DiceImpl;
 import schocken.marco.de.schocken.game.player.Player;
@@ -54,6 +55,11 @@ public class PlayerImpl implements Player{
      */
     private short shots;
 
+    /**
+     * The count of halfs a player has.
+     */
+    private int halfs;
+
 
     /**
      * Constructor of the class {@link Player}.
@@ -69,6 +75,8 @@ public class PlayerImpl implements Player{
         }
         finish = false;
         shots = 0;
+        penalties = 0;
+        halfs = 0;
     }
     @Override
     public String getName() {
@@ -80,6 +88,7 @@ public class PlayerImpl implements Player{
         for(int i=0; i<dicesIn.size();++i){
             dicesIn.get(i).roll();
         }
+        ++shots;
         return true;
     }
 
@@ -94,21 +103,21 @@ public class PlayerImpl implements Player{
     }
 
     @Override
-    public void addPenalties(final int penalties) throws Exception{
+    public void addPenalties(final int penalties) throws MaxPenaltyException{
         this.penalties+=penalties;
         if(this.penalties>maxPenalties){
-            throw new Exception("The penalties cant be more than "+maxPenalties+"!");
+            throw new MaxPenaltyException("The penalties cant be more than "+maxPenalties+"!");
         }
     }
 
     @Override
-    public void setPenalties(final int penalties) throws Exception {
+    public void setPenalties(final int penalties) throws MaxPenaltyException {
         this.penalties = penalties;
         if(this.penalties>maxPenalties){
-            throw new Exception("The penalties cant be more than "+maxPenalties+"!");
+            throw new MaxPenaltyException("The penalties cant be more than "+maxPenalties+"!");
         }
         if( penalties > maxPenalties){
-            throw new Exception("The value of the parameter penalties cant be more than "+maxPenalties+"!");
+            throw new MaxPenaltyException("The value of the parameter penalties cant be more than "+maxPenalties+"!");
         }
     }
 
@@ -189,6 +198,34 @@ public class PlayerImpl implements Player{
     @Override
     public void callBlock() {
 
+    }
+
+    @Override
+    public int getPenaltiesOfDiceValue() {
+        return 0;
+    }
+
+    @Override
+    public void resetAll() {
+        /*
+        TODO:
+        Strafsteine zurück setzen
+
+        Hälften zurück setzen
+        rausgelegte Würfel zurück setzen
+        würfelanzahl zurücksetzen
+         */
+        penalties = 0;
+        halfs = 0;
+        shots = 0;
+        dicesOut.clear();
+    }
+
+    @Override
+    public void resetForNewHalf() {
+        penalties = 0;
+        shots = 0;
+        dicesOut.clear();
     }
 
     /**

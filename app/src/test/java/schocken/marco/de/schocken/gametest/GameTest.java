@@ -47,7 +47,7 @@ public class GameTest implements GameSettings {
             players.add(new PlayerImpl(playerNames[i]));
         }
 
-        game = new GameImpl();
+        game = new GameImpl(null);
         for(final Player player: players) {
             game.addPlayer(player);
         }
@@ -123,5 +123,50 @@ public class GameTest implements GameSettings {
         } catch (PlayerNotFoundException exception) {
             exception.printStackTrace();
         }
+    }
+
+    /**
+     * This methods tests the start of a game.
+     */
+    @Test
+    public void startGameTest(){
+        game.getCurrentPlayer().rollTheDices();
+        /**
+         * TODO: implementation.
+         */
+        Assert.fail();
+    }
+
+    /**
+     * This method tests the next player method.
+     */
+    @Test
+    public void nextPlayerTest(){
+        /**
+         * TODO: implementation.
+         */
+        Assert.fail();
+    }
+
+    /**
+     * This method tests the distribution of the penalties.
+     */
+    @Test
+    public void distributePenaltiesTest(){
+        /**
+         * TODO: implementation.
+         */
+        Assert.fail();
+    }
+
+    /**
+     * This method tests the end of a round.
+     */
+    @Test
+    public void roundEndedTest(){
+        /**
+         * TODO: implementation.
+         */
+        Assert.fail();
     }
 }

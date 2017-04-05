@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import schocken.marco.de.schocken.exceptions.MaxPenaltyException;
 import schocken.marco.de.schocken.game.dice.Dice;
 import schocken.marco.de.schocken.game.player.Player;
 import schocken.marco.de.schocken.game.player.impl.PlayerImpl;
@@ -37,12 +38,26 @@ public class PlayerTest implements GameSettings{
         for(int i=0; i <maxPenalties;++i){
             try {
                 player.addPenalties(1);
-            } catch (Exception e) {
+            } catch (MaxPenaltyException e) {
                 e.printStackTrace();
             }
         }
         Assert.assertEquals(maxPenalties,player.getPenalties());
     }
+    /**
+     * This method tests the penalties of a player.
+     */
+    @Test
+    public void penaltiesTest2(){
+        Player player = new PlayerImpl("Marco");
+        try {
+            player.addPenalties(maxPenalties+1);
+            Assert.fail("You cant give the player more penalties than the max penalties.");
+        } catch (MaxPenaltyException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * This method tests the dices which are out.
@@ -98,6 +113,9 @@ public class PlayerTest implements GameSettings{
         Assert.assertEquals(3, player.getShots());
     }
 
+    /**
+     * This method tests the shots of a player.
+     */
     @Test
     public void shotsTest2(){
         Player player = new PlayerImpl("Marco");
@@ -108,5 +126,13 @@ public class PlayerTest implements GameSettings{
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * This method tests the penalties belonging to the dice value.
+     */
+    @Test
+    public void penaltiesBelongingToTheDiceValueTest(){
+        Assert.fail();
     }
 }

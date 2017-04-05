@@ -6,6 +6,7 @@ package schocken.marco.de.schocken.game.player;
 
 import java.util.List;
 
+import schocken.marco.de.schocken.exceptions.MaxPenaltyException;
 import schocken.marco.de.schocken.game.dice.Dice;
 import schocken.marco.de.schocken.game.settings.GameSettings;
 
@@ -36,13 +37,13 @@ public interface Player extends GameSettings{
      * This method add penalties.
      * @param penalties The penalties.
      */
-    void addPenalties(final int penalties) throws Exception;
+    void addPenalties(final int penalties) throws MaxPenaltyException;
 
     /**
      * This method sets the penalties.
      * @param penalties The penalties.
      */
-    void setPenalties(final int penalties) throws Exception;
+    void setPenalties(final int penalties) throws MaxPenaltyException;
 
     /**
      * This method returns the penalties of the player.
@@ -107,4 +108,20 @@ public interface Player extends GameSettings{
      * TODO: documentation.
      */
     void callBlock();
+
+    /**
+     * This method returns the count of the penalties belonging to the dice value.
+     * @return The penalties belonging to the dice value.
+     */
+    int getPenaltiesOfDiceValue();
+
+    /**
+     * This method resets all variables of a player.
+     */
+    void resetAll();
+
+    /**
+     * This method resets all relevant variables of a player for a new half.
+     */
+    void resetForNewHalf();
 }
