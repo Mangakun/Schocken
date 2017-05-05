@@ -7,6 +7,7 @@ package schocken.marco.de.schocken.game.player;
 import java.util.List;
 
 import schocken.marco.de.schocken.exceptions.MaxPenaltyException;
+import schocken.marco.de.schocken.exceptions.TooManyShotsException;
 import schocken.marco.de.schocken.game.dice.Dice;
 import schocken.marco.de.schocken.game.settings.GameSettings;
 
@@ -25,7 +26,7 @@ public interface Player extends GameSettings{
      * This method rolks the dices which are in the cup.
      * @return True, if the rolling was successful.
      */
-    boolean rollTheDices();
+    boolean rollTheDices() throws TooManyShotsException;
 
     /**
      * This method returns the dice value.
@@ -86,12 +87,6 @@ public interface Player extends GameSettings{
      * @param finish The state of the player.
      */
     void setFinish(final boolean finish);
-
-    /**
-     * This method increase the shots of the player.
-     * @throws Exception
-     */
-    void increaseShots() throws Exception;
 
     /**
      * This method returns the shots of a player.

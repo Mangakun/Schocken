@@ -10,6 +10,7 @@ import java.util.List;
 
 import schocken.marco.de.schocken.exceptions.DiceNotFoundException;
 import schocken.marco.de.schocken.exceptions.MaxPenaltyException;
+import schocken.marco.de.schocken.exceptions.TooManyShotsException;
 import schocken.marco.de.schocken.game.dice.Dice;
 import schocken.marco.de.schocken.game.dice.impl.DiceImpl;
 import schocken.marco.de.schocken.game.player.Player;
@@ -53,7 +54,7 @@ public class PlayerImpl implements Player{
     /**
      * The shots of the player.
      */
-    private short shots;
+    private short currentShots;
 
     /**
      * The count of halfs a player has.
@@ -74,7 +75,7 @@ public class PlayerImpl implements Player{
             dicesIn.add(dices.get(i));
         }
         finish = false;
-        shots = 0;
+        currentShots = 0;
         penalties = 0;
         halfs = 0;
     }
@@ -84,11 +85,12 @@ public class PlayerImpl implements Player{
     }
 
     @Override
-    public boolean rollTheDices() {
+    public boolean rollTheDices() throws TooManyShotsException {
+        // increase shots
+        ++ currentShots;
         for(int i=0; i<dicesIn.size();++i){
             dicesIn.get(i).roll();
         }
-        ++shots;
         return true;
     }
 
@@ -105,7 +107,7 @@ public class PlayerImpl implements Player{
     @Override
     public void addPenalties(final int penalties) throws MaxPenaltyException{
         this.penalties+=penalties;
-        if(this.penalties>maxPenalties){
+        if(this.penalties > maxPenalties){
             throw new MaxPenaltyException("The penalties cant be more than "+maxPenalties+"!");
         }
     }
@@ -144,6 +146,7 @@ public class PlayerImpl implements Player{
                 throw new Exception("The dice object is already in the list of the dices which are in! This shouldn't be");
             } catch (Exception e) {
                 e.printStackTrace();
+                return false;
             }
         }
         // add the dice to the list of dices which are under the cup
@@ -178,16 +181,8 @@ public class PlayerImpl implements Player{
     }
 
     @Override
-    public void increaseShots() throws Exception{
-        ++shots;
-        if(this.shots > maxShots){
-                throw new Exception("The player can only roll "+maxShots+" times!");
-        }
-    }
-
-    @Override
     public short getShots() {
-        return shots;
+        return currentShots;
     }
 
     @Override

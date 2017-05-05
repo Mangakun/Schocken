@@ -7,19 +7,22 @@ import java.util.List;
 
 import schocken.marco.de.schocken.exceptions.MaxPenaltyException;
 import schocken.marco.de.schocken.exceptions.PlayerNotFoundException;
-import schocken.marco.de.schocken.game.Game;
+import schocken.marco.de.schocken.exceptions.TooManyShotsException;
+import schocken.marco.de.schocken.game.GameExtension;
 import schocken.marco.de.schocken.game.enums.GameStart;
 import schocken.marco.de.schocken.game.player.Player;
+import schocken.marco.de.schocken.game.player.impl.PlayerImpl;
 import schocken.marco.de.schocken.game.round.Round;
 import schocken.marco.de.schocken.game.round.impl.RoundImpl;
 import schocken.marco.de.schocken.game.settings.GameSettings;
-import schocken.marco.de.schocken.presenters.GamePresenter;
+import schocken.marco.de.schocken.presenters.game.ButtonManagement;
+import schocken.marco.de.schocken.presenters.game.GamePresenter;
 
 /**
  * Created by Marco on 14.02.2017.
  */
 
-public class GameImpl implements Game, GameSettings{
+public class GameImpl implements GameExtension, GameSettings{
 
     /**
      * Message string for debug.
@@ -29,7 +32,7 @@ public class GameImpl implements Game, GameSettings{
     /**
      * An object of the class {@link GamePresenter}.
      */
-    private final GamePresenter gamePresenter;
+    private final ButtonManagement buttonManagement;
 
     /**
      * A list of players.
@@ -83,83 +86,84 @@ public class GameImpl implements Game, GameSettings{
     /**
      * Constructor of the class {@link GameImpl}.
      */
-    public GameImpl(final GamePresenter gamePresenter){
-        this.gamePresenter = gamePresenter;
+    public GameImpl(final ButtonManagement buttonManagement){
+        this.buttonManagement = buttonManagement;
         players = new ArrayList<>();
         rounds = new ArrayList<>();
-    }
-
-
-    @Override
-    public Player getPlayer(final int position) throws PlayerNotFoundException {
-        try{
-            return players.get(position);
-        }catch(IndexOutOfBoundsException exception) {
-            throw new PlayerNotFoundException(position);
-        }
-    }
-
-    @Override
-    public Player getPlayer(String playerName) throws PlayerNotFoundException {
-        for(Player player: players){
-            if(player.getName().equals(playerName)) {
-                return player;
-            }
-        }
-        throw new PlayerNotFoundException(playerName);
-    }
-
-    @Override
-    public List<Player> getPlayers() {
-        return null;
-    }
-
-    @Override
-    public void addPlayer(final Player player) {
-        players.add(player);
-    }
-
-    @Override
-    public void nextPlayer() {
-        /*
-        TODO: change view -> delete all buttons
-         */
-        if(players.indexOf(currentPlayer)==players.size()-1){
-            currentPlayer = players.get(0);
-        }else {
-            currentPlayer = players.get(players.indexOf(currentPlayer)+1);
-        }
-        // a player with three dices has to be skipped
-        if(currentPlayer.getDicesOut().size() == GameSettings.maxDices){
-            // is the current player equal teh start player, then the round has finished
-            if(currentPlayer == startPlayer){
-                distributePenalties();
-            }else{
-                nextPlayer();
-            }
-
-        }else{
-            // look how much shots are left
-        }
-
 
     }
 
-    @Override
-    public Player getCurrentPlayer() {
-        return currentPlayer;
-    }
 
-    @Override
-    public boolean removePlayer(Player player) {
-        return players.remove(player);
-    }
+//    @Override
+//    public Player getPlayer(final int position) throws PlayerNotFoundException {
+//        try{
+//            return players.get(position);
+//        }catch(IndexOutOfBoundsException exception) {
+//            throw new PlayerNotFoundException(position);
+//        }
+//    }
+//
+//    @Override
+//    public Player getPlayer(String playerName) throws PlayerNotFoundException {
+//        for(Player player: players){
+//            if(player.getName().equals(playerName)) {
+//                return player;
+//            }
+//        }
+//        throw new PlayerNotFoundException(playerName);
+//    }
 
-    @Override
-    public Round getCurrentRound() {
-        return currentRound;
-    }
+//    @Override
+//    public List<Player> getPlayers() {
+//        return null;
+//    }
+//
+//    @Override
+//    public void addPlayer(final Player player) {
+//        players.add(player);
+//    }
+//
+//    @Override
+//    public void nextPlayer() {
+//        /*
+//        TODO: change view -> delete all buttons
+//         */
+//        if(players.indexOf(currentPlayer)==players.size()-1){
+//            currentPlayer = players.get(0);
+//        }else {
+//            currentPlayer = players.get(players.indexOf(currentPlayer)+1);
+//        }
+//        // a player with three dices has to be skipped
+//        if(currentPlayer.getDicesOut().size() == GameSettings.maxDices){
+//            // is the current player equal teh start player, then the round has finished
+//            if(currentPlayer == startPlayer){
+//                distributePenalties();
+//            }else{
+//                nextPlayer();
+//            }
+//
+//        }else{
+//            // look how much shots are left
+//        }
+//
+//
+//    }
 
+//    @Override
+//    public Player getCurrentPlayer() {
+//        return currentPlayer;
+//    }
+//
+//    @Override
+//    public boolean removePlayer(Player player) {
+//        return players.remove(player);
+//    }
+//
+//    @Override
+//    public Round getCurrentRound() {
+//        return currentRound;
+//    }
+//
     @Override
     public void startGame() {
         switch (gameStart) {
@@ -180,43 +184,71 @@ public class GameImpl implements Game, GameSettings{
     }
 
     @Override
+    public void stay() {
+
+    }
+
+    @Override
+    public void block() {
+
+    }
+
+    @Override
+    public void blind() {
+        /**
+         * 1. Es darf nur der Startspieler blind drücken können.
+         * 2. Wenn er der nicht ist, dann eine RuntimeException schmeissen!
+         * 3. Es muss eine variable gesetzt werden, dass die Runde blind gespielt wird.
+         */
+
+    }
+
+    @Override
     public void rollTheDice() {
         if (currentPlayer.getShots() < maxShots){
-            currentPlayer.rollTheDices();
+            try {
+                currentPlayer.rollTheDices();
+            } catch (TooManyShotsException e) {
+                e.printStackTrace();
+                /*
+                TODO: remove current player from the active players!
+                TODO: go on with next player!
+                 */
+            }
             /**
              * TODO: update GUI
              */
         }else{
-            nextPlayer();
+            //nextPlayer();
         }
     }
 
-    @Override
-    public void resign() {
-        // if the current player is equal the start player
-        if(currentPlayer == startPlayer){
-            // set the max shots
-            maxShots = currentPlayer.getShots();
-        }
-        /*
-        TODO: hier schon besten und sclechtesten Spieler bestimmen ?
-         */
-        // call next player
-        nextPlayer();
-    }
-
-    @Override
-    public void discover() {
-        // TODO: update dice gui
-    }
-
-    @Override
-    public void currentPlayerFinish() {
-        /*
-        TODO: hier schon neuen besten und schlechtesten player analysieren ?
-         */
-        nextPlayer();
-    }
+//    @Override
+//    public void resign() {
+//        // if the current player is equal the start player
+//        if(currentPlayer == startPlayer){
+//            // set the max shots
+//            maxShots = currentPlayer.getShots();
+//        }
+//        /*
+//        TODO: hier schon besten und sclechtesten Spieler bestimmen ?
+//         */
+//        // call next player
+//        nextPlayer();
+//    }
+//
+//    @Override
+//    public void discover() {
+//        // TODO: update dice gui
+//    }
+//
+//    @Override
+//    public void currentPlayerFinish() {
+//        /*
+//        TODO: hier schon neuen besten und schlechtesten player analysieren ?
+//         */
+//        nextPlayer();
+//    }
 
     /**
      * This method resets all players for a new game.
@@ -305,21 +337,44 @@ public class GameImpl implements Game, GameSettings{
     }
 
     /**
-     * TODO: documentation.
+     * This method determines the best player.
      */
     private Player determineBestPlayer(){
         throw new UnsupportedOperationException("determineBestPlayer is not implemented yet!");
+        /*
+        TODO; implementation.
+         */
 
     }
 
     /**
-     * TODO: documentation.
+     * This method determines the worst player.
      */
-    private Player  determineWorstPlayer(){
+    private Player determineWorstPlayer(){
         throw new UnsupportedOperationException("determineWorstPlayer is not implemented yet!");
+          /*
+        TODO; implementation.
+         */
     }
 
 
+    /**
+     * This method creates the turn options a player has.
+     */
+    private void createTurnOptions(){
+        throw new UnsupportedOperationException("createTurnOptions is not implemented yet!");
+        /*
+        TODO: implementation.
+         */
+    }
 
 
+    @Override
+    public void addPlayers(final String[] playerNames) {
+        for(final String playerName : playerNames){
+            Log.d(msg, "Add "+playerName+ " to the game!");
+            final Player player = new PlayerImpl(playerName);
+            players.add(player);
+        }
+    }
 }
