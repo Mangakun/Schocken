@@ -54,7 +54,12 @@ public class PlayerImpl implements Player{
     /**
      * The shots of the player.
      */
-    private short currentShots;
+    private int currentShots;
+
+    /**
+     * The current max shots.
+     */
+    private int currentMaxShots;
 
     /**
      * The count of halfs a player has.
@@ -78,6 +83,7 @@ public class PlayerImpl implements Player{
         currentShots = 0;
         penalties = 0;
         halfs = 0;
+        currentMaxShots = maxShots;
     }
     @Override
     public String getName() {
@@ -85,13 +91,25 @@ public class PlayerImpl implements Player{
     }
 
     @Override
-    public boolean rollTheDices() throws TooManyShotsException {
-        // increase shots
-        ++ currentShots;
-        for(int i=0; i<dicesIn.size();++i){
-            dicesIn.get(i).roll();
+    public boolean rollTheDices() {
+        if(!finish){
+            // increase shots
+            ++ currentShots;
+            // roll every dice which is under the cup
+            for(int i=0; i<dicesIn.size();++i){
+                dicesIn.get(i).roll();
+            }
+            // if the current max shots is reached
+            if(currentShots == currentMaxShots){
+                // the player is finished
+                finish = true;
+            }
+            // return true, that the player could roll his dices
+            return true;
+        }else{
+            // return false, that the player could not roll his dices
+            return false;
         }
-        return true;
     }
 
     @Override
@@ -181,7 +199,7 @@ public class PlayerImpl implements Player{
     }
 
     @Override
-    public short getShots() {
+    public int getShots() {
         return currentShots;
     }
 
@@ -212,15 +230,21 @@ public class PlayerImpl implements Player{
          */
         penalties = 0;
         halfs = 0;
-        shots = 0;
+        currentShots = 0;
         dicesOut.clear();
+        currentMaxShots = maxShots;
     }
 
     @Override
     public void resetForNewHalf() {
         penalties = 0;
-        shots = 0;
+        currentShots = 0;
         dicesOut.clear();
+    }
+
+    @Override
+    public void setCurrentMaxShots(final int currentMaxShots) {
+        this.currentMaxShots=currentMaxShots;
     }
 
     /**

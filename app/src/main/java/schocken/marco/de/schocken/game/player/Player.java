@@ -23,10 +23,10 @@ public interface Player extends GameSettings{
     String getName();
 
     /**
-     * This method rolks the dices which are in the cup.
+     * This method rolls the dices which are in the cup.
      * @return True, if the rolling was successful.
      */
-    boolean rollTheDices() throws TooManyShotsException;
+    boolean rollTheDices();
 
     /**
      * This method returns the dice value.
@@ -92,7 +92,7 @@ public interface Player extends GameSettings{
      * This method returns the shots of a player.
      * @return The shots of the player.
      */
-    short getShots();
+    int getShots();
 
     /**
      * TODO: documentation.
@@ -119,4 +119,10 @@ public interface Player extends GameSettings{
      * This method resets all relevant variables of a player for a new half.
      */
     void resetForNewHalf();
+
+    /**
+     * This method sets the current max shots a player has in this round.
+     * @param currentMaxShots The current max shots.
+     */
+    void setCurrentMaxShots(final int currentMaxShots);
 }

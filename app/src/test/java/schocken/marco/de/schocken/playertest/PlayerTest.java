@@ -100,31 +100,73 @@ public class PlayerTest implements GameSettings{
      * This method tests the dice value.
      */
     @Test
-    public void diceValueTest(){
-        try {
-            player.rollTheDices();
-        } catch (TooManyShotsException e) {
-            e.printStackTrace();
-            Assert.fail(e.getMessage());
-        }
+    public void diceOutTest(){
+
         List<Dice> dicesOut = player.getDicesOut();
-        Assert.assertEquals("The dices which are out should be",0,dicesOut.size());
+        Assert.assertEquals("The dices which are out should be", 0, dicesOut.size());
         List<Dice> dicesUnderTheCup = player.getDicesUnderTheCup();
-        Assert.assertEquals("The dices under the cup should be",maxDices,player.getDicesUnderTheCup().size());
-        for(int i=0; i<maxDices;++i){
-            player.takeDiceOut(dicesUnderTheCup.get(maxDices-1-i));
+        Assert.assertEquals("The dices under the cup should be", maxDices, player.getDicesUnderTheCup().size());
+        for (int i = 0; i < maxDices; ++i) {
+            player.takeDiceOut(dicesUnderTheCup.get(maxDices - 1 - i));
         }
-        Assert.assertEquals("The dices which are out should be",maxDices,player.getDicesOut().size());
-        Assert.assertEquals("The dices which are out should be",maxDices,dicesOut.size());
+        Assert.assertEquals("The dices which are out should be", maxDices, player.getDicesOut().size());
+        Assert.assertEquals("The dices which are out should be", maxDices, dicesOut.size());
     }
 
     /**
      * This method tests the shots of a player.
+     * MaxShots is test here.
      */
     @Test
-    public void rollTheDiceTest(){
+    public void rollTheDiceTestWithMaxShots3(){
+        // first roll
+        Assert.assertTrue("The player can roll!",player.rollTheDices());
+        Assert.assertFalse("The player is not finished", player.isFinished());
+        // second roll
+        Assert.assertTrue("The player can roll!",player.rollTheDices());
+        Assert.assertFalse("The player is not finished", player.isFinished());
+        // third roll
+        Assert.assertTrue("The player can roll!",player.rollTheDices());
+        Assert.assertTrue("The player is finished", player.isFinished());
+        // fourth roll
+        Assert.assertFalse("The player can not roll!",player.rollTheDices());
+    }
+
+    /**
+     * This method tests the shots of a player.
+     * Less than maxShots is tested here.
+     */
+    @Test
+    public void rollTheDiceTestWithMaxShots2(){
+        player.setCurrentMaxShots(2);
+        Assert.assertTrue("The player can roll!",player.rollTheDices());
+        Assert.assertFalse("The player is not finished", player.isFinished());
+        // second roll
+        Assert.assertTrue("The player can roll!",player.rollTheDices());
+        Assert.assertTrue("The player is finished", player.isFinished());
+        // third roll
+        Assert.assertFalse("The player can not roll!",player.rollTheDices());
+    }
+    /**
+     * This method tests the shots of a player.
+     * Less than maxShots is tested here.
+     */
+    @Test
+    public void rollTheDiceTestWithMaxShots1(){
+        player.setCurrentMaxShots(1);
+        Assert.assertTrue("The player can roll!",player.rollTheDices());
+        Assert.assertTrue("The player is not finished", player.isFinished());
+        // second roll
+        Assert.assertFalse("The player can not roll!",player.rollTheDices());
+    }
+
+    /**
+     * This method tests the return of the dice value of a player.
+     */
+    @Test
+    public void diceValueTest(){
         /*
-        TODO: implementation of this test
+        TODO: implementation.
          */
     }
 //

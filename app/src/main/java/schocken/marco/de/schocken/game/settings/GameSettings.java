@@ -10,6 +10,6 @@ public interface GameSettings {
 
     final int maxDices = 3;
 
-    final short maxShots = 3;
+    final int maxShots = 3;
 
 }

@@ -75,11 +75,6 @@ public class GameImpl implements GameExtension, GameSettings{
     private int penaltiesStack;
 
     /**
-     * The max shots.
-     */
-    private int maxShots;
-
-    /**
      * TODO: documentation.
      */
     private GameStart gameStart = GameStart.FIRSTPLAYER;
@@ -122,17 +117,22 @@ public class GameImpl implements GameExtension, GameSettings{
 //    public void addPlayer(final Player player) {
 //        players.add(player);
 //    }
-//
-//    @Override
-//    public void nextPlayer() {
-//        /*
-//        TODO: change view -> delete all buttons
-//         */
-//        if(players.indexOf(currentPlayer)==players.size()-1){
-//            currentPlayer = players.get(0);
-//        }else {
-//            currentPlayer = players.get(players.indexOf(currentPlayer)+1);
-//        }
+
+
+    private void nextPlayer() {
+        // disble all buttons
+        buttonManagement.disableBlockButton();
+        buttonManagement.disableStayButton();
+        buttonManagement.disableTheRollTheDiceButton();
+        // get next player
+        if(players.indexOf(currentPlayer)==players.size()-1){
+            currentPlayer = players.get(0);
+        }else {
+            currentPlayer = players.get(players.indexOf(currentPlayer)+1);
+        }
+        // create possibilities
+        createPossibilities();
+
 //        // a player with three dices has to be skipped
 //        if(currentPlayer.getDicesOut().size() == GameSettings.maxDices){
 //            // is the current player equal teh start player, then the round has finished
@@ -147,7 +147,7 @@ public class GameImpl implements GameExtension, GameSettings{
 //        }
 //
 //
-//    }
+    }
 
 //    @Override
 //    public Player getCurrentPlayer() {
@@ -185,12 +185,12 @@ public class GameImpl implements GameExtension, GameSettings{
 
     @Override
     public void stay() {
-
+        throw new RuntimeException("The method stop is not implemented yet!");
     }
 
     @Override
     public void block() {
-
+        throw new RuntimeException("The method block is not implemented yet!");
     }
 
     @Override
@@ -205,21 +205,24 @@ public class GameImpl implements GameExtension, GameSettings{
 
     @Override
     public void rollTheDice() {
-        if (currentPlayer.getShots() < maxShots){
-            try {
-                currentPlayer.rollTheDices();
-            } catch (TooManyShotsException e) {
-                e.printStackTrace();
-                /*
-                TODO: remove current player from the active players!
-                TODO: go on with next player!
-                 */
+        currentPlayer.rollTheDices();
+        if (currentPlayer.isFinished()) {
+            // when the current player the start player distribute the current max shots
+            if(currentPlayer.equals(startPlayer)){
+                distributeCurrentMaxShots(currentPlayer.getShots());
             }
+            nextPlayer();
+            /*
+            TODO: remove current player from the active players!
+            TODO: go on with next player!
+            */
             /**
              * TODO: update GUI
              */
-        }else{
-            //nextPlayer();
+        } else {
+            /*
+            TODO: aufdecken der Würfel
+             */
         }
     }
 
@@ -249,6 +252,20 @@ public class GameImpl implements GameExtension, GameSettings{
 //         */
 //        nextPlayer();
 //    }
+
+    /**
+     * This method distributes the current max shots to all players.
+     * @param maxShots The current max shots of the round
+     */
+    private void distributeCurrentMaxShots(final int maxShots){
+        // iterate over all players and set the max shots
+        for(final Player player : players){
+            if(player.equals(currentPlayer) && player.equals(startPlayer)){
+                continue;
+            }
+            player.setCurrentMaxShots(maxShots);
+        }
+    }
 
     /**
      * This method resets all players for a new game.
@@ -359,9 +376,9 @@ public class GameImpl implements GameExtension, GameSettings{
 
 
     /**
-     * This method creates the turn options a player has.
+     * This method creates the possibilities a player has for his turn.
      */
-    private void createTurnOptions(){
+    private void createPossibilities(){
         throw new UnsupportedOperationException("createTurnOptions is not implemented yet!");
         /*
         TODO: implementation.
